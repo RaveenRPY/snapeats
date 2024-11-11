@@ -8,6 +8,7 @@ class AppColors {
   static const Color darkTextColor = Color(0xff171725);
   static const Color lightGray = Color(0xff3C3C3C);
   static const Color disableGray = Color(0xff7B7B7B);
+  static const Color separationColor = Color(0xffE8E8E8);
   static const Color errorColor = Color(0xffff0000);
   static const Color promoColor = Color(0xffFFB200);
   static const Color transparent = Colors.transparent;
