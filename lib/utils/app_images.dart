@@ -1,0 +1,18 @@
+class AppImages {
+
+  ///PNGs
+  static const String loggedBG = 'assets/images/loggedBG.png';
+  static const String loginBG = 'assets/images/onboardingBG.png';
+
+  ///JPEGs
+  static const String defaultUser = 'assets/images/avatar_sample.jpg';
+
+  ///Lottie
+  static const String failedDialog = 'assets/lottie/failedError.json';
+  static const String confirmDialog = 'assets/lottie/q1.json';
+  static const String warnDialog = 'assets/lottie/warning.json';
+  static const String successDialog = 'assets/lottie/successNew.json';
+  static const String loadingAnimation = 'assets/lottie/loading3.json';
+  static const String emptyAnimation = 'assets/lottie/empty_animation.json';
+  static const String splashAnimation = 'assets/lottie/logo3.json';
+}

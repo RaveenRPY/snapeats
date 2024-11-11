@@ -1,0 +1,36 @@
+name: snapeats
+description: "A new Flutter project.A Flutter-based food ordering app that lets users browse menus, filter by categories, view detailed items, and customize orders with add-ons. SnapEats offers a user-friendly, responsive interface designed for a seamless ordering experience."
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.2.1
+  flutter_sizer: ^1.0.5
+  bloc: ^8.1.4
+  flutter_bloc: ^8.1.6
+  lottie: ^3.1.2
+  icons_plus: ^5.0.0
+  page_transition: ^2.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^4.0.0
+
+flutter:
+
+  uses-material-design: true
+
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
