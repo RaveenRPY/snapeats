@@ -113,23 +113,26 @@ class MenuItemDetailsView extends StatelessWidget {
               Divider(thickness: 5,color: AppColors.separationColor.withOpacity(0.7),),
               const SizedBox(height: 20),
 
-              if (menuItem.modifierGroupRules!.iDs!.isNotEmpty)
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: menuItem.modifierGroupRules!.iDs!.length,
-                  itemBuilder: (context, index) {
-                    String id = menuItem.modifierGroupRules!.iDs![index];
-                    log(menuItem.menuItemId.toString());
-                    // ModifierGroup group = AppConstants.allModifierList!.firstWhere((element) => id == element.modifierGroupId);
+              if (menuItem.modifierGroupRules!.iDs!.isNotEmpty && menuItem.modifierGroupRules!.iDs!.first != '')
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: menuItem.modifierGroupRules!.iDs!.length,
+                    itemBuilder: (context, index) {
+                      String id = menuItem.modifierGroupRules!.iDs![index];
+                      log(menuItem.menuItemId.toString());
+                      ModifierGroup group = AppConstants.allModifierList!.firstWhere((element) => id == element.modifierGroupId);
 
-                    return Column(children: [
-                      Text(
-                        'group.title!.en' ?? '',
-                        style: AppStyles.lightTextSize14Black,
-                        textAlign: TextAlign.left,
-                      ),
-                    ],);
-                  },
+                      return Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
+                        Text(
+                          group.title!.en ?? '',
+                          style: AppStyles.boldTextSize16Black,
+                          textAlign: TextAlign.left,
+                        ),
+                      ],);
+                    },
+                  ),
                 ),
             ],
           ),
