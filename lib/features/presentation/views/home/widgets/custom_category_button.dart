@@ -19,12 +19,13 @@ class CustomCategoryButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        padding: const EdgeInsets.fromLTRB(15,5,10,5),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primaryGreen : AppColors.primaryWhite,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? AppColors.primaryGreen : AppColors.separationColor,
+            color:
+                isSelected ? AppColors.primaryGreen : AppColors.separationColor,
           ),
         ),
         child: Row(
@@ -32,9 +33,10 @@ class CustomCategoryButton extends StatelessWidget {
           children: [
             Text(
               label,
-              style: AppStyles.mediumTextSize15Black.copyWith(
-                color: isSelected ? AppColors.primaryWhite : AppColors.darkTextColor,
-                fontWeight: FontWeight.w400,
+              style: AppStyles.boldTextSize12Black.copyWith(
+                color: isSelected
+                    ? AppColors.primaryWhite
+                    : AppColors.darkTextColor,
               ),
             ),
             if (isSelected) ...[
@@ -42,7 +44,7 @@ class CustomCategoryButton extends StatelessWidget {
               const Icon(
                 Icons.close,
                 color: AppColors.primaryWhite,
-                size: 18,
+                size: 15,
               ),
             ],
           ],

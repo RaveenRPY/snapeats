@@ -37,6 +37,11 @@ class AppStyles {
     fontSize: 14,
     color: AppColors.primaryGreen,
   );
+  static TextStyle boldTextSize14Black = GoogleFonts.urbanist(
+    fontWeight: FontWeight.w700,
+    fontSize: 14,
+    color: AppColors.darkTextColor,
+  );
 
   ///fontSize - 15
   static TextStyle regularTextSize15Black = GoogleFonts.urbanist(
@@ -55,6 +60,16 @@ class AppStyles {
     fontSize: 16,
     color: AppColors.darkTextColor,
   );
+  static TextStyle mediumTextSize16White = GoogleFonts.urbanist(
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+    color: AppColors.primaryWhite,
+  );
+  static TextStyle mediumTextSize16Gray = GoogleFonts.urbanist(
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+    color: AppColors.disableGray,
+  );
   static TextStyle boldTextSize16Black = GoogleFonts.urbanist(
     fontWeight: FontWeight.w700,
     fontSize: 16,
@@ -67,11 +82,28 @@ class AppStyles {
     fontSize: 20,
     color: AppColors.primaryWhite,
   );
+  ///fontSize - 24
+  static TextStyle boldTextSize24Black = GoogleFonts.urbanist(
+    fontWeight: FontWeight.w700,
+    fontSize: 24,
+    color: AppColors.darkTextColor,
+  );
   ///fontSize - 32
   static TextStyle boldTextSize32White = GoogleFonts.urbanist(
     fontWeight: FontWeight.w700,
     fontSize: 32,
     color: AppColors.primaryWhite,
+  );
+  ///fontSize - 50
+  static TextStyle mediumTextSize50White = GoogleFonts.urbanist(
+    fontWeight: FontWeight.w600,
+    fontSize: 50,
+    color: AppColors.primaryWhite,
+  );
+  static TextStyle mediumTextSize50Black = GoogleFonts.urbanist(
+    fontWeight: FontWeight.w600,
+    fontSize: 50,
+    color: AppColors.darkTextColor,
   );
 
 }

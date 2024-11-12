@@ -29,7 +29,7 @@ class SelectionButton extends StatelessWidget {
         child: Center(
           child: Text(
             title,
-            style: AppStyles.mediumTextSize15Black,
+            style: AppStyles.boldTextSize14Black,
           ),
         ),
       ),

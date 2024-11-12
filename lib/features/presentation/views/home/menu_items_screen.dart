@@ -1,20 +1,32 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:snapeats/features/data/models/data_model.dart';
 import 'package:snapeats/features/presentation/views/home/widgets/custom_category_button.dart';
+import 'package:snapeats/features/presentation/views/home/widgets/menu_card.dart';
 import 'package:snapeats/features/presentation/views/home/widgets/menu_item_card.dart';
+import 'package:snapeats/features/presentation/widgets/app_main_button.dart';
 import 'package:snapeats/utils/app_colors.dart';
+import 'package:snapeats/utils/app_constants.dart';
 import 'package:snapeats/utils/app_images.dart';
 import 'package:snapeats/utils/app_styles.dart';
 
 class MenuItemsScreen extends StatefulWidget {
-  const MenuItemsScreen({super.key});
+  final List<Category> currentCategoryList;
+
+  const MenuItemsScreen({super.key, required this.currentCategoryList});
 
   @override
   State<MenuItemsScreen> createState() => _MenuItemsScreenState();
 }
 
 class _MenuItemsScreenState extends State<MenuItemsScreen> {
+  int selectedMenuIndex = AppConstants.currentMenuIndex!;
+  List<Category> newCategoryList = [];
+
   @override
   void initState() {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -22,6 +34,9 @@ class _MenuItemsScreenState extends State<MenuItemsScreen> {
       systemNavigationBarColor: AppColors.primaryWhite,
       statusBarIconBrightness: Brightness.dark,
     ));
+    setState(() {
+      newCategoryList = widget.currentCategoryList;
+    });
     super.initState();
   }
 
@@ -139,26 +154,26 @@ class _MenuItemsScreenState extends State<MenuItemsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    _showBottomSheet(context);
+                  },
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    width: 134,
                     height: 40,
                     decoration: BoxDecoration(
                       color: AppColors.separationColor,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 8),
+                      padding: const EdgeInsets.fromLTRB(13,0,5,0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            'LUNCH MENU',
-                            style: AppStyles.lightTextSize12White.copyWith(
-                                color: AppColors.darkTextColor,
-                                fontWeight: FontWeight.w600),
+                            AppConstants.allMenuList![AppConstants.currentMenuIndex!].title!.en ?? '',
+                            style: AppStyles.boldTextSize14Black,
                           ),
+                          const SizedBox(width: 5),
                           const Icon(Icons.keyboard_arrow_down_rounded)
                         ],
                       ),
@@ -172,17 +187,23 @@ class _MenuItemsScreenState extends State<MenuItemsScreen> {
           const SizedBox(height: 25),
           SizedBox(
             height: 35,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.fromLTRB(index == 0 ? 16 : 0, 0, 8, 0),
-                  child: CustomCategoryButton(
-                      label: 'label', isSelected: false, onPressed: () {}),
-                );
-              },
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemCount: newCategoryList.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.fromLTRB(index == 0 ? 16 : 0, 0, 8, 0),
+                    child: CustomCategoryButton(
+                      label: newCategoryList[index].title!.en ?? '',
+                      isSelected: AppConstants.currentCategoryIndex == index,
+                      onPressed: () {},
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           const SizedBox(height: 10),
@@ -204,6 +225,100 @@ class _MenuItemsScreenState extends State<MenuItemsScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      enableDrag: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      barrierColor: AppColors.primaryBlack.withOpacity(0.8),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.only(top: 13),
+          width: double.infinity,
+          height: 68.h,
+          decoration: BoxDecoration(
+              color: AppColors.primaryWhite,
+              borderRadius: BorderRadius.circular(25)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 50,
+                  height: 5,
+                  decoration: BoxDecoration(
+                      color: AppColors.lightGray,
+                      borderRadius: BorderRadius.circular(30)),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Select menu',
+                      style: AppStyles.boldTextSize24Black,
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.close_rounded,
+                        color: AppColors.lightGray,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Divider(
+                color: AppColors.separationColor,
+                thickness: 1,
+              ),
+              const SizedBox(height: 15),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: AppConstants.allMenuList!.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: MenuCard(
+                          title: AppConstants.allMenuList![index].title!.en ?? '',
+                          index: index,
+                          onTap: () {
+                            log('sd');
+                            setState(() {
+                            });
+                          },
+                          isSelected: selectedMenuIndex == index,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                child: AppMainButton(
+                  title: 'Done',
+                  onTap: () {},
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
