@@ -34,10 +34,10 @@ class _MenuCardState extends State<MenuCard> {
       color: AppColors.transparent,
       child: InkWell(
         onTap: (){
-          setState(() {
-            _selectedIndex = widget.index;
-            isSelected = !isSelected;
-          });
+          // setState(() {
+          //   _selectedIndex = widget.index;
+          //   isSelected = !isSelected;
+          // });
           widget.onTap!();
         },
         splashColor: AppColors.primaryGreen.withOpacity(0.2),
@@ -67,9 +67,9 @@ class _MenuCardState extends State<MenuCard> {
                   toggleable: true,
                   groupValue: widget.isSelected! ? widget.index : null,
                   onChanged: (_) {
-                    setState(() {
-                      isSelected = !isSelected;
-                    });
+                    // setState(() {
+                    //   isSelected = !isSelected;
+                    // });
                     widget.onTap!();
                   },
                 ),

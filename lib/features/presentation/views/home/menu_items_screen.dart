@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:snapeats/features/data/models/data_model.dart';
+import 'package:snapeats/features/presentation/views/home/menu_item_details_view.dart';
 import 'package:snapeats/features/presentation/views/home/widgets/custom_category_button.dart';
 import 'package:snapeats/features/presentation/views/home/widgets/menu_card.dart';
 import 'package:snapeats/features/presentation/views/home/widgets/menu_item_card.dart';
@@ -24,8 +25,137 @@ class MenuItemsScreen extends StatefulWidget {
 }
 
 class _MenuItemsScreenState extends State<MenuItemsScreen> {
-  int selectedMenuIndex = AppConstants.currentMenuIndex!;
+  late int selectedMenuIndex;
   List<Category> newCategoryList = [];
+  List<MenuEntity> menuEntityList = [];
+  List<Item> menuItemsList = [];
+
+  late int _selectIndex;
+
+  void _showMenuBottomSheet(BuildContext context, Function onUpdated) {
+    _selectIndex = selectedMenuIndex;
+
+    showModalBottomSheet(
+      context: context,
+      enableDrag: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      barrierColor: AppColors.primaryBlack.withOpacity(0.8),
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (BuildContext context, setState) {
+          return Container(
+            padding: const EdgeInsets.only(top: 13),
+            width: double.infinity,
+            height: 68.h,
+            decoration: BoxDecoration(
+                color: AppColors.primaryWhite,
+                borderRadius: BorderRadius.circular(25)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 50,
+                    height: 5,
+                    decoration: BoxDecoration(
+                        color: AppColors.lightGray,
+                        borderRadius: BorderRadius.circular(30)),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Select menu $_selectIndex',
+                        style: AppStyles.boldTextSize24Black,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            Navigator.pop(context);
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.close_rounded,
+                          color: AppColors.lightGray,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Divider(
+                  color: AppColors.separationColor,
+                  thickness: 1,
+                ),
+                const SizedBox(height: 15),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: AppConstants.allMenuList!.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: MenuCard(
+                            title: AppConstants.allMenuList![index].title!.en ??
+                                '',
+                            index: index,
+                            onTap: () {
+                              setState(() {
+                                _selectIndex = index;
+                              });
+                              log('$_selectIndex + $index');
+                            },
+                            isSelected: _selectIndex == index,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                  child: AppMainButton(
+                    title: 'Done',
+                    onTap: () {
+                      setState(() {
+                        selectedMenuIndex = _selectIndex;
+                        AppConstants.currentMenuIndex = selectedMenuIndex;
+                        onUpdated();
+                        Navigator.pop(context);
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  void _showMenuItemBottomSheet(
+      BuildContext context, Function onUpdated, int index) {
+    showModalBottomSheet(
+      context: context,
+      enableDrag: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      barrierColor: AppColors.primaryBlack.withOpacity(0.8),
+      builder: (BuildContext context) {
+        return MenuItemDetailsView(
+          menuItem: menuItemsList[index],
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -35,7 +165,18 @@ class _MenuItemsScreenState extends State<MenuItemsScreen> {
       statusBarIconBrightness: Brightness.dark,
     ));
     setState(() {
+      selectedMenuIndex = AppConstants.currentMenuIndex!;
+      _selectIndex = selectedMenuIndex;
+
       newCategoryList = widget.currentCategoryList;
+      menuEntityList =
+          newCategoryList[AppConstants.currentCategoryIndex!].menuEntities!;
+
+      for (var e in menuEntityList) {
+        final item = AppConstants.allMenuItemList!
+            .firstWhere((element) => e.id == element.menuItemId);
+        menuItemsList.add(item);
+      }
     });
     super.initState();
   }
@@ -155,7 +296,26 @@ class _MenuItemsScreenState extends State<MenuItemsScreen> {
               children: [
                 InkWell(
                   onTap: () {
-                    _showBottomSheet(context);
+                    _showMenuBottomSheet(context, () {
+                      setState(() {
+                        String menuCategoryId = AppConstants
+                            .allMenuList![selectedMenuIndex]
+                            .menuCategoryIDs![0];
+                        newCategoryList = AppConstants.allCategoryList!
+                            .where((element) =>
+                                element.menuCategoryId == menuCategoryId)
+                            .toList();
+                        menuEntityList =
+                            newCategoryList[AppConstants.currentCategoryIndex!]
+                                .menuEntities!;
+                        menuItemsList.clear();
+                        for (var e in menuEntityList) {
+                          final item = AppConstants.allMenuItemList!.firstWhere(
+                              (element) => e.id == element.menuItemId);
+                          menuItemsList.add(item);
+                        }
+                      });
+                    });
                   },
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
@@ -165,12 +325,14 @@ class _MenuItemsScreenState extends State<MenuItemsScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(13,0,5,0),
+                      padding: const EdgeInsets.fromLTRB(13, 0, 5, 0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            AppConstants.allMenuList![AppConstants.currentMenuIndex!].title!.en ?? '',
+                            AppConstants.allMenuList![selectedMenuIndex].title!
+                                    .en ??
+                                '',
                             style: AppStyles.boldTextSize14Black,
                           ),
                           const SizedBox(width: 5),
@@ -209,116 +371,29 @@ class _MenuItemsScreenState extends State<MenuItemsScreen> {
           const SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: menuItemsList.length,
               shrinkWrap: true,
               itemBuilder: (context, index) {
+                Item item = menuItemsList[index];
+
                 return MenuItemCard(
-                  title: 'Bacon Wrapped Hotdog',
-                  price: 'LKR 3200.00',
-                  description: 'Classic sandwich with cheese',
-                  isDeal: true,
-                  isLastItem: index == 10,
+                  title: item.title!.en!,
+                  price: 'LKR ${item.priceInfo!.price!.pickupPrice}',
+                  description: item.description!.en,
+                  isDeal: item.metaData!.isDealProduct,
+                  isLastItem: index == menuItemsList.length - 1,
                   image: 'https://loremflickr.com/50/50/food',
+                  onTap: () {
+                    _showMenuItemBottomSheet(context, () {
+                      setState(() {});
+                    }, index);
+                  },
                 );
               },
             ),
           ),
         ],
       ),
-    );
-  }
-
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      enableDrag: true,
-      isScrollControlled: true,
-      useSafeArea: true,
-      barrierColor: AppColors.primaryBlack.withOpacity(0.8),
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.only(top: 13),
-          width: double.infinity,
-          height: 68.h,
-          decoration: BoxDecoration(
-              color: AppColors.primaryWhite,
-              borderRadius: BorderRadius.circular(25)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 50,
-                  height: 5,
-                  decoration: BoxDecoration(
-                      color: AppColors.lightGray,
-                      borderRadius: BorderRadius.circular(30)),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Select menu',
-                      style: AppStyles.boldTextSize24Black,
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.close_rounded,
-                        color: AppColors.lightGray,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Divider(
-                color: AppColors.separationColor,
-                thickness: 1,
-              ),
-              const SizedBox(height: 15),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: AppConstants.allMenuList!.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: MenuCard(
-                          title: AppConstants.allMenuList![index].title!.en ?? '',
-                          index: index,
-                          onTap: () {
-                            log('sd');
-                            setState(() {
-                            });
-                          },
-                          isSelected: selectedMenuIndex == index,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                child: AppMainButton(
-                  title: 'Done',
-                  onTap: () {},
-                ),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

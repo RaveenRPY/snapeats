@@ -76,11 +76,23 @@ class AppStyles {
     color: AppColors.darkTextColor,
   );
 
+  ///fontSize - 18
+  static TextStyle boldTextSize18Black = GoogleFonts.urbanist(
+    fontWeight: FontWeight.w700,
+    fontSize: 18,
+    color: AppColors.darkTextColor,
+  );
+
   ///fontSize - 20
   static TextStyle mediumTextSize20White = GoogleFonts.urbanist(
     fontWeight: FontWeight.w600,
     fontSize: 20,
     color: AppColors.primaryWhite,
+  );
+  static TextStyle boldTextSize20Black = GoogleFonts.urbanist(
+    fontWeight: FontWeight.w700,
+    fontSize: 20,
+    color: AppColors.darkTextColor,
   );
   ///fontSize - 24
   static TextStyle boldTextSize24Black = GoogleFonts.urbanist(
