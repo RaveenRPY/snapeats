@@ -20,9 +20,6 @@ class MenuItemDetailsView extends StatelessWidget {
     int _mainQty = 1;
 
     return StatefulBuilder(builder: (BuildContext context, setState) {
-      String imgBaseUrl = 'https://loremflickr.com/640/480/food';
-      String randomImageUrl =
-          '$imgBaseUrl?random=${Random().nextInt(20)}';
 
       return Container(
         padding: const EdgeInsets.only(top: 13),
@@ -59,7 +56,7 @@ class MenuItemDetailsView extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10),
                               image:  DecorationImage(
                                 image: NetworkImage(
-                                  randomImageUrl,
+                                  menuItem.imageUrl ?? 'https://loremflickr.com/640/480/food',
                                 ),
                                 fit: BoxFit.cover,
                               ),
@@ -142,86 +139,89 @@ class MenuItemDetailsView extends StatelessWidget {
                                 .firstWhere(
                                     (element) => id == element.modifierGroupId);
 
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  group.title!.en ?? '',
-                                  style: AppStyles.boldTextSize16Black,
-                                  textAlign: TextAlign.left,
-                                ),
-                                if (group.modifierOptions!.isNotEmpty)
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        10, 10, 0, 20),
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount:
-                                            group.modifierOptions!.length,
-                                        itemBuilder: (context, index) {
-                                          String id =
-                                              group.modifierOptions![index].id!;
-                                          Item item = AppConstants
-                                              .allMenuItemList!
-                                              .firstWhere((element) =>
-                                                  id == element.menuItemId);
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    group.title!.en ?? '',
+                                    style: AppStyles.boldTextSize16Black,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  if (group.modifierOptions!.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 10, 0, 20),
+                                      child: ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemCount:
+                                              group.modifierOptions!.length,
+                                          itemBuilder: (context, index) {
+                                            String id =
+                                                group.modifierOptions![index].id!;
+                                            Item item = AppConstants
+                                                .allMenuItemList!
+                                                .firstWhere((element) =>
+                                                    id == element.menuItemId, orElse: () => Item());
 
-                                          return Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 0, 0, 10),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      item.title!.en ?? '',
-                                                      style: AppStyles
-                                                          .mediumTextSize14Black,
-                                                    ),
-                                                    Text(
-                                                      'Rs. ${item.priceInfo!.price!.pickupPrice ?? '0.00'}',
-                                                      style: AppStyles
-                                                          .regularTextSize12Black,
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  mainAxisSize: MainAxisSize.min ,
-                                                  children: [
-                                                    IconButton(
-                                                      onPressed: () {},
-                                                      icon: const Icon(
-                                                        Icons.remove_circle_outline_rounded,
-                                                        color:
-                                                            AppColors.lightGray,
-                                                        size: 20,
+                                            return item != -1 ? Padding(
+                                              padding: const EdgeInsets.fromLTRB(
+                                                  0, 0, 0, 10),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        item.title?.en ?? group.title!.en!.split(' ')[1],
+                                                        style: AppStyles
+                                                            .mediumTextSize14Black,
                                                       ),
-                                                    ),
-                                                    Text('1'),
-                                                    IconButton(
-                                                      onPressed: () {},
-                                                      icon: const Icon(
-                                                        Icons.add_circle_outline_rounded,
-                                                        color:
-                                                            AppColors.lightGray,
-                                                        size: 20,
+                                                      Text(
+                                                        'Rs. ${item.priceInfo?.price?.pickupPrice ?? '0.00'}',
+                                                        style: AppStyles
+                                                            .regularTextSize12Black,
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        }),
-                                  )
-                              ],
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisSize: MainAxisSize.min ,
+                                                    children: [
+                                                      IconButton(
+                                                        onPressed: () {},
+                                                        icon: const Icon(
+                                                          Icons.remove_circle_outline_rounded,
+                                                          color:
+                                                              AppColors.lightGray,
+                                                          size: 20,
+                                                        ),
+                                                      ),
+                                                      Text('1'),
+                                                      IconButton(
+                                                        onPressed: () {},
+                                                        icon: const Icon(
+                                                          Icons.add_circle_outline_rounded,
+                                                          color:
+                                                              AppColors.lightGray,
+                                                          size: 20,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ) : const SizedBox.shrink();
+                                          },),
+                                    )
+                                ],
+                              ),
                             );
                           },
                         ),
@@ -236,7 +236,7 @@ class MenuItemDetailsView extends StatelessWidget {
                 children: [
                   Container(
                     width: 120,
-                    height: 6.5.h,
+                    height: 48,
                     decoration: BoxDecoration(
                       color: AppColors.separationColor,
                       borderRadius: BorderRadius.circular(10),
