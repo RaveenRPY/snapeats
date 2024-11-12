@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,130 +33,7 @@ class _MenuItemsScreenState extends State<MenuItemsScreen> {
 
   late int _selectIndex;
 
-  void _showMenuBottomSheet(BuildContext context, Function onUpdated) {
-    _selectIndex = selectedMenuIndex;
 
-    showModalBottomSheet(
-      context: context,
-      enableDrag: true,
-      isScrollControlled: true,
-      useSafeArea: true,
-      barrierColor: AppColors.primaryBlack.withOpacity(0.8),
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (BuildContext context, setState) {
-          return Container(
-            padding: const EdgeInsets.only(top: 13),
-            width: double.infinity,
-            height: 68.h,
-            decoration: BoxDecoration(
-                color: AppColors.primaryWhite,
-                borderRadius: BorderRadius.circular(25)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 50,
-                    height: 5,
-                    decoration: BoxDecoration(
-                        color: AppColors.lightGray,
-                        borderRadius: BorderRadius.circular(30)),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Select menu $_selectIndex',
-                        style: AppStyles.boldTextSize24Black,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            Navigator.pop(context);
-                          });
-                        },
-                        icon: const Icon(
-                          Icons.close_rounded,
-                          color: AppColors.lightGray,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Divider(
-                  color: AppColors.separationColor,
-                  thickness: 1,
-                ),
-                const SizedBox(height: 15),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: AppConstants.allMenuList!.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: MenuCard(
-                            title: AppConstants.allMenuList![index].title!.en ??
-                                '',
-                            index: index,
-                            onTap: () {
-                              setState(() {
-                                _selectIndex = index;
-                              });
-                              log('$_selectIndex + $index');
-                            },
-                            isSelected: _selectIndex == index,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                  child: AppMainButton(
-                    title: 'Done',
-                    onTap: () {
-                      setState(() {
-                        selectedMenuIndex = _selectIndex;
-                        AppConstants.currentMenuIndex = selectedMenuIndex;
-                        onUpdated();
-                        Navigator.pop(context);
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
-      },
-    );
-  }
-
-  void _showMenuItemBottomSheet(
-      BuildContext context, Function onUpdated, int index) {
-    showModalBottomSheet(
-      context: context,
-      enableDrag: true,
-      isScrollControlled: true,
-      useSafeArea: true,
-      barrierColor: AppColors.primaryBlack.withOpacity(0.8),
-      builder: (BuildContext context) {
-        return MenuItemDetailsView(
-          menuItem: menuItemsList[index],
-        );
-      },
-    );
-  }
 
   @override
   void initState() {
@@ -183,6 +61,7 @@ class _MenuItemsScreenState extends State<MenuItemsScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: AppColors.primaryWhite,
       body: Column(
@@ -376,13 +255,17 @@ class _MenuItemsScreenState extends State<MenuItemsScreen> {
               itemBuilder: (context, index) {
                 Item item = menuItemsList[index];
 
+                String imgBaseUrl = 'https://loremflickr.com/100/100/food';
+                String randomImageUrl =
+                    '$imgBaseUrl?random=${Random().nextInt(20)}';
+
                 return MenuItemCard(
                   title: item.title!.en!,
                   price: 'LKR ${item.priceInfo!.price!.pickupPrice}',
                   description: item.description!.en,
                   isDeal: item.metaData!.isDealProduct,
                   isLastItem: index == menuItemsList.length - 1,
-                  image: 'https://loremflickr.com/50/50/food',
+                  image: randomImageUrl,
                   onTap: () {
                     _showMenuItemBottomSheet(context, () {
                       setState(() {});
@@ -394,6 +277,131 @@ class _MenuItemsScreenState extends State<MenuItemsScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showMenuBottomSheet(BuildContext context, Function onUpdated) {
+    _selectIndex = selectedMenuIndex;
+
+    showModalBottomSheet(
+      context: context,
+      enableDrag: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      barrierColor: AppColors.primaryBlack.withOpacity(0.8),
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (BuildContext context, setState) {
+          return Container(
+            padding: const EdgeInsets.only(top: 13),
+            width: double.infinity,
+            height: 68.h,
+            decoration: BoxDecoration(
+                color: AppColors.primaryWhite,
+                borderRadius: BorderRadius.circular(25)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 50,
+                    height: 5,
+                    decoration: BoxDecoration(
+                        color: AppColors.lightGray,
+                        borderRadius: BorderRadius.circular(30)),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Select menu',
+                        style: AppStyles.boldTextSize24Black,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            Navigator.pop(context);
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.close_rounded,
+                          color: AppColors.lightGray,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Divider(
+                  color: AppColors.separationColor,
+                  thickness: 1,
+                ),
+                const SizedBox(height: 15),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: AppConstants.allMenuList!.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: MenuCard(
+                            title: AppConstants.allMenuList![index].title!.en ??
+                                '',
+                            index: index,
+                            onTap: () {
+                              setState(() {
+                                _selectIndex = index;
+                              });
+                            },
+                            isSelected: _selectIndex == index,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                  child: AppMainButton(
+                    title: 'Done',
+                    onTap: () {
+                      setState(() {
+                        selectedMenuIndex = _selectIndex;
+                        AppConstants.currentMenuIndex = selectedMenuIndex;
+                        onUpdated();
+                        Navigator.pop(context);
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  void _showMenuItemBottomSheet(
+      BuildContext context, Function onUpdated, int index) {
+    showModalBottomSheet(
+      backgroundColor: AppColors.primaryWhite,
+      context: context,
+      enableDrag: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      barrierColor: AppColors.primaryBlack.withOpacity(0.8),
+      builder: (BuildContext context) {
+        return MenuItemDetailsView(
+          menuItem: menuItemsList[index],
+        );
+      },
     );
   }
 }

@@ -12,6 +12,7 @@ class AppMainButton extends StatefulWidget {
   final bool? isEnable;
   final Widget? prefixIcon;
   final double? width;
+  final double? borderRadius;
 
   const AppMainButton({
     super.key,
@@ -22,6 +23,7 @@ class AppMainButton extends StatefulWidget {
     this.isEnable = true,
     this.prefixIcon,
     this.width,
+    this.borderRadius,
   });
 
   @override
@@ -42,6 +44,8 @@ class _AppMainButtonState extends State<AppMainButton> {
                 horizontal: 16,
               ),
             ),
+            shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(widget.borderRadius ?? 60))),
+
             splashFactory: InkRipple.splashFactory,
             backgroundColor: widget.isEnable!
                 ? WidgetStatePropertyAll(widget.color)
