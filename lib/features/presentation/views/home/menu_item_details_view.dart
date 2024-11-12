@@ -23,119 +23,184 @@ class MenuItemDetailsView extends StatelessWidget {
         decoration: BoxDecoration(
             color: AppColors.primaryWhite,
             borderRadius: BorderRadius.circular(25)),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(
-                  Icons.close_rounded,
-                  color: AppColors.disableGray,
-                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.close_rounded,
+                color: AppColors.disableGray,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: double.infinity,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        image: const DecorationImage(
-                          image: NetworkImage(
-                            'https://loremflickr.com/640/480/food',
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              image: const DecorationImage(
+                                image: NetworkImage(
+                                  'https://loremflickr.com/640/480/food',
+                                ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
-                          fit: BoxFit.cover,
-                        ),
+                          const SizedBox(height: 35),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  menuItem.title!.en ?? '',
+                                  style: AppStyles.boldTextSize18Black,
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  'Rs. ${menuItem.priceInfo?.price!.pickupPrice ?? '0.00'}',
+                                  style: AppStyles.boldTextSize20Black,
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Icon(
+                                Icons.location_on_outlined,
+                                color: AppColors.primaryGreen,
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.star_rounded,
+                                    color: AppColors.primaryGreen,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    '5.0',
+                                    style: AppStyles.boldTextSize12Black,
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 30),
+                          Text(
+                            menuItem.description!.en ?? '',
+                            style: AppStyles.lightTextSize14Black,
+                            textAlign: TextAlign.left,
+                          ),
+                          const SizedBox(height: 20),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 35),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            menuItem.title!.en ?? '',
-                            style: AppStyles.boldTextSize18Black,
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            'Rs. ${menuItem.priceInfo?.price!.pickupPrice ?? '0.00'}',
-                            style: AppStyles.boldTextSize20Black,
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Icon(
-                          Icons.location_on_outlined,
-                          color: AppColors.primaryGreen,
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.star_rounded,
-                              color: AppColors.primaryGreen,
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              '5.0',
-                              style: AppStyles.boldTextSize12Black,
-                              textAlign: TextAlign.right,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 30),
-                    Text(
-                      menuItem.description!.en ?? '',
-                      style: AppStyles.lightTextSize14Black,
-                      textAlign: TextAlign.left,
+                    Divider(
+                      thickness: 5,
+                      color: AppColors.separationColor.withOpacity(0.7),
                     ),
                     const SizedBox(height: 20),
+                    if (menuItem.modifierGroupRules!.iDs!.isNotEmpty &&
+                        menuItem.modifierGroupRules!.iDs!.first != '')
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: menuItem.modifierGroupRules!.iDs!.length,
+                          itemBuilder: (context, index) {
+                            String id = menuItem.modifierGroupRules!.iDs![index];
+                            ModifierGroup group = AppConstants.allModifierList!
+                                .firstWhere(
+                                    (element) => id == element.modifierGroupId);
+                
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  group.title!.en ?? '',
+                                  style: AppStyles.boldTextSize16Black,
+                                  textAlign: TextAlign.left,
+                                ),
+                                if (group.modifierOptions!.isNotEmpty)
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(10, 10, 0, 20),
+                                    child: ListView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount: group.modifierOptions!.length,
+                                        itemBuilder: (context, index) {
+                                          String id =
+                                              group.modifierOptions![index].id!;
+                                          log(group.modifierOptions![0].id.toString());
+                                          Item item = AppConstants.allMenuItemList!
+                                              .firstWhere((element) =>
+                                                  id == element.menuItemId);
+                
+                                          return Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 0, 0, 10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      item.title!.en ?? '',
+                                                      style: AppStyles
+                                                          .mediumTextSize14Black,
+                                                    ),
+                                                    Text(
+                                                      'Rs. ${item.priceInfo!.price!.pickupPrice ?? '0.00'}',
+                                                      style: AppStyles
+                                                          .regularTextSize12Black,
+                                                    ),
+                                                  ],
+                                                ),
+                                                IconButton(
+                                                  onPressed: () {},
+                                                  icon: const Icon(
+                                                    Icons.add_box_rounded,
+                                                    color: AppColors.primaryGreen,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }),
+                                  )
+                              ],
+                            );
+                          },
+                        ),
+                      ),
                   ],
                 ),
               ),
-
-              Divider(thickness: 5,color: AppColors.separationColor.withOpacity(0.7),),
-              const SizedBox(height: 20),
-
-              if (menuItem.modifierGroupRules!.iDs!.isNotEmpty && menuItem.modifierGroupRules!.iDs!.first != '')
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: menuItem.modifierGroupRules!.iDs!.length,
-                    itemBuilder: (context, index) {
-                      String id = menuItem.modifierGroupRules!.iDs![index];
-                      log(menuItem.menuItemId.toString());
-                      ModifierGroup group = AppConstants.allModifierList!.firstWhere((element) => id == element.modifierGroupId);
-
-                      return Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
-                        Text(
-                          group.title!.en ?? '',
-                          style: AppStyles.boldTextSize16Black,
-                          textAlign: TextAlign.left,
-                        ),
-                      ],);
-                    },
-                  ),
-                ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     });
