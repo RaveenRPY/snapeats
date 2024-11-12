@@ -22,6 +22,11 @@ class AppStyles {
   );
 
   ///fontSize - 14
+  static TextStyle lightTextSize14Black = GoogleFonts.urbanist(
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+    color: AppColors.darkTextColor,
+  );
   static TextStyle mediumTextSize14Black = GoogleFonts.urbanist(
     fontWeight: FontWeight.w500,
     fontSize: 14,
